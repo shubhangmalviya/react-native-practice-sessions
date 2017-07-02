@@ -1,16 +1,9 @@
 import React, { Component } from 'react'
-import {TextInput, View, Button} from 'react-native'
+import {TextInput, View, Button, Text} from 'react-native'
 import { connect } from 'react-redux'
+import {performLogin, onTextChange} from './Action'
 
-export default class LoginView extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            username : "",
-            password: ""
-        };
-    }
+export class LoginView extends Component {
 
     render() {
         return (
@@ -18,34 +11,40 @@ export default class LoginView extends Component {
                           flexDirection: 'column',
                           justifyContent: 'center',
                           alignItems: 'stretch'}}>
+                <Text>
+                    {this.props.isLoginSuccess}
+                </Text>
                 <TextInput placeholder={'username'}
-                           onChangeText={(username) => this.state.username = username}/>
+                           onChangeText={(username) => this.props.onTextChange('username', username)}/>
                 <TextInput placeholder={'password'}
-                           onChangeText={(password) => this.state.password = password}/>
+                           onChangeText={(password) => this.props.onTextChange('password', password)}/>
                 <Button title={'login'}
-                        onPress={this.onPressLogin} />
+                        onPress={this.onPressLogin.bind(this, this.props.username, this.props.password)} />
             </View>
         );
     }
 
-    onPressLogin = () => {
-        this.createSession().then((response) => {
-            console.log(response + "received")
-        }).catch((error) => {
-            console.log(error + "received")
-        });
+    onPressLogin = (username, password) => {
+        this.props.performLogin(username, password);
     };
-
-    createSession() {
-        return fetch('http://192.168.1.100:3001/sessions/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: this.state.username,
-                password: this.state.password,
-            })
-        }).then((response) => response.json());
-    }
 }
+
+const mapStateToProps = (state) => {
+    return {
+    username: state.LoginReducer.username,
+    password: state.LoginReducer.password,
+    isLoading: state.LoginReducer.isLoading,
+    isLoginSuccess: state.LoginReducer.isLoginSuccess,
+    error: state.LoginReducer.error
+}};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        performLogin:
+            (userName, password) =>
+                dispatch(performLogin(userName,password)),
+        onTextChange: (property, text) => dispatch(onTextChange(property, text))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginView);

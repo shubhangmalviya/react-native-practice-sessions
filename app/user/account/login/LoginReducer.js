@@ -10,12 +10,12 @@ const initialState = {
     }
 };
 
-const LoginReducer = (state = initialState, action) => {
+export function LoginReducer(state = initialState, action) {
     switch (action.type) {
         case 'TEXT_CHANGE':
             return {
                 ...state,
-                [action.property] : action.property
+                [action.property] : action[action.property]
             };
         case 'SUBMITTING_FORM':
             return {
@@ -41,6 +41,4 @@ const LoginReducer = (state = initialState, action) => {
         default:
             return state;
     }
-};
-
-export default LoginReducer;
+}

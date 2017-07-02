@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux'
-import {LoginReducer} from './app/user/account/login/LoginReducer'
-
 import LoginView from './app/user/account/login/LoginView'
 
-let store = createStore(LoginReducer);
+import configureStore from './app/store/configureStore'
+
+let store = configureStore();
 
 export default class ReactTestPrototype extends Component {
   render() {
