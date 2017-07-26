@@ -1,4 +1,3 @@
-import {loginAPI} from './LoginApi'
 
 /**
  * This file list all the action creators (functions that return an action),
@@ -15,31 +14,31 @@ import {loginAPI} from './LoginApi'
 /**
  *
  * @param property
+ * @param screen
  * @param text
  */
-export const setTextChange = (property, text) => ({
+export const setTextChange = (property, screen, text) => ({
     type: 'TEXT_CHANGE',
     [property] : text,
-    property
+    property,
+    screen
 });
 
-export const submittingFormInProgress = () => ({
-    type : 'SUBMITTING_FORM_IN_PROGRESS'
-});
-
-export const submitFormSuccess = (data) => ({
+export const submitFormSuccess = (data, screen) => ({
     type : 'SUBMIT_FORM_SUCCESS',
-    data
+    data,
+    screen
 });
 
-export const submitFormFailure = (error) => ({
+export const submitFormFailure = (error, screen) => ({
     type : 'SUBMIT_FORM_FAILURE',
-    error
+    error,
+    screen
 });
 
-export function onTextChange(property, text) {
+export function onTextChange(property, screen, text) {
     return (dispatch) => {
-        dispatch(setTextChange(property, text));
+        dispatch(setTextChange(property, screen, text));
     }
 }
 
@@ -47,7 +46,7 @@ export function performLogin(username, password) {
     return (dispatch) => {
         //dispatch(submittingFormInProgress());
 
-        fetch('http://192.168.1.100:3001/sessions/create', {
+        fetch('http://172.18.4.33:3001/sessions/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -62,7 +61,7 @@ export function performLogin(username, password) {
             }
             return response.json()
         })
-          .then((response) => dispatch(submitFormSuccess(response)))
-          .catch((error) => dispatch(submitFormFailure(error.message)));
+          .then((response) => dispatch(submitFormSuccess(response, "Login")))
+          .catch((error) => dispatch(submitFormFailure(error.message, "Login")));
     }
 }
